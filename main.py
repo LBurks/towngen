@@ -99,6 +99,7 @@ def gen_map(starting_points, iterations):
     points = starting_points
     centers = []
     for i in range(iterations):
+        print("Generation", i)
         if i > 0:
             points = centers
         diagram = spatial.Voronoi(points)
@@ -111,6 +112,7 @@ def gen_map(starting_points, iterations):
             center = find_centroid(vertices[r])
             centers.append(center)
     result = {'points': points, 'centers': centers, 'regions': regions, 'vertices': vertices, 'ridges': ridges }#, 'ridge_points': ridge_points, 'ridge_vertices': ridge_vertices}
+    print("Done generating diagram")
     return diagram, result
 
 
@@ -128,6 +130,34 @@ def sampledata(max_points):
     yfile = open('y.sample', 'r')
     limit = min(max_points, 100)
     return numpy.array([[float(x), float(y)] for x, y, i in zip(xfile, yfile, range(limit))])
+
+def drawPolys(diagram):
+    print("Drawing map")
+    surface = cairo.SVGSurface("example.svg", WIDTH, HEIGHT)
+    context = cairo.Context(surface)
+    context.scale(WIDTH, HEIGHT)
+    context.set_line_width(0.001)
+    context.set_font_size(0.005)
+    context.set_source_rgba(0, 0, 0, 1)
+
+    res = []
+    for v in diagram['vertices']:
+        res.append(radialForm(v))
+
+    for r in diagram['regions']:
+        subset = [res[v] for v in r]
+
+        context.set_source_rgba(0, 0, 0, 0)
+        context.move_to(diagram['vertices'][r[0]][0], diagram['vertices'][r[0]][1])
+        for v in diagram['vertices'][r[1:]]:
+            context.line_to(v[0], v[1])
+        context.close_path()
+        if subset.count(True) > subset.count(False):
+            context.set_source_rgba(0, 0.8, 0, 1)
+            context.fill()
+        else:
+            context.set_source_rgba(0, 0, 0.8, 1)
+            context.fill()
 
 def drawOutlines(diagram):
     surface = cairo.SVGSurface("example.svg", WIDTH, HEIGHT)
@@ -168,12 +198,35 @@ def drawOutlines(diagram):
         context.fill()
         context.stroke()
 
-MAX_POINTS = 100
-WIDTH = 100.0
-HEIGHT = 100.0
+#This is a blind translation from https://github.com/amitp/mapgen2/blob/4394df0e04101dbbdc36ee1e61ad7d62446bb3f1/Map.as
+#The comments are left as is as well
+def radialForm(point):
+    x = point[0]# - 0.5
+    y = point[1]# - 0.5
+    ISLAND_FACTOR = 1 #1 leads to no small islands, 2 leads to a lot
+    bumps = random.randint(1, 6)
+    startAngle = random.uniform(0, 2*numpy.pi)
+    dipAngle = random.uniform(0, 2*numpy.pi)
+    dipWidth = random.uniform(0, 0.1)
+
+    angle = math.atan2(y, x)
+    length = 0.5 * (max([math.fabs(point[0]), math.fabs(point[1])]) + math.sqrt(math.pow(x, 2) + math.pow(y, 2)))
+    r1 = 0.5 + 0.4*math.sin(startAngle + bumps + math.cos((bumps+3) * angle))
+    r2 = 0.7 - 0.2*math.sin(startAngle + bumps - math.sin((bumps+2) * angle))
+    if math.fabs(angle - dipAngle) < dipWidth or math.fabs(angle - dipAngle + 2*numpy.pi) < dipWidth or math.fabs(angle - dipAngle - 2*numpy.pi) < dipWidth:
+        r1 = r2 = 0.2
+    return (length < r1 or (length > r1 * ISLAND_FACTOR and length < r2))
+
+# translation of the makePerlin function from above
+# def perlinForm(point):
+
+
+MAX_POINTS = 1000
+WIDTH = 10000.0
+HEIGHT = 10000.0
 yratio = 1 #float(HEIGHT) / 200
 xratio = 1 #float(WIDTH) / 200
 
-old_diagram, diagram  = gen_map(sampledata(MAX_POINTS), 5)
+old_diagram, diagram  = gen_map(randomdata(MAX_POINTS), 5)
 
-drawOutlines(diagram)
+drawPolys(diagram)
