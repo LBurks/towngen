@@ -75,7 +75,7 @@ def drawPolys(diagram, outfile = "polys", width = 1000.0, height = 1000.0):
 
 
 def drawFortune(points, lines, outfile = "fortune", width = 1000.0, height = 1000.0):
-    print("Drawing map")
+#    print("Drawing map")
     surface = cairo.SVGSurface(outfile + ".svg", width, height)
     context = cairo.Context(surface)
     context.scale(width, height)
@@ -91,10 +91,20 @@ def drawFortune(points, lines, outfile = "fortune", width = 1000.0, height = 100
         context.arc(p[0], p[1], 0.004, 0, 2*numpy.pi)
         context.fill()
         context.stroke()
-    context.set_source_rgb(0.7, 0.2, 0.2)
     for l in lines:
         p1 = l.start
         p2 = l.end
+        context.set_source_rgb(0.2, 0.2, 0.7)
+        if (p1 is not None):
+            context.move_to(0, 0)
+            context.arc(p1[0], p1[1], 0.004, 0, 2*numpy.pi)
+            context.fill()
+        if (p2 is not None):
+            context.move_to(0, 0)
+            context.arc(p2[0], p2[1], 0.004, 0, 2*numpy.pi)
+            context.fill()
+        context.stroke()
+        context.set_source_rgb(0, 0, 0)
         if (p1 is not None and p2 is not None):
             context.move_to(p1[1], p1[0])
             context.line_to(p2[1], p2[0])

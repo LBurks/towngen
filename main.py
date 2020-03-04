@@ -216,7 +216,6 @@ def randomdata(max_points):
 # The purpose is to get a consistent map to test results of various features i'm working on.
 # This will go away in the future
 def sampledata(max_points):
-    random.seed(int(time.time()))
     xfile = open('x.sample', 'r')
     yfile = open('y.sample', 'r')
     limit = min(max_points, 100)
