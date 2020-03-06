@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.spatial as spatial
 
-from fortune import fortune1 as fortune
+from fortune import fortune
 
 def sampledata(max_points):
     xfile = open('x.sample', 'r')
