@@ -1,13 +1,25 @@
+import random
+import time
+from math import sqrt
+
 import numpy as np
 import scipy.spatial as spatial
 
-from fortune import fortune
+#from fortune import fortune, circle
+from fortune1 import fortune as fortune1
+from draw import drawFortune
 
-def sampledata(max_points):
+def sampledata(max_points = 100):
     xfile = open('x.sample', 'r')
     yfile = open('y.sample', 'r')
-    limit = min(max_points, 100)
-    return np.array([[float(x), float(y)] for x, y, i in zip(xfile, yfile, range(limit))])
+    limit = max_points
+    return [[float(x), float(y)] for x, y, i in zip(xfile, yfile, range(limit))]
+
+def randomdata(max_points):
+    random.seed(int(time.time()))
+    xset = [random.uniform(.2, .8) for x in range(max_points)]
+    yset = [random.uniform(.2, .8) for y in range(max_points)]
+    return np.array([[x, y] for x, y in zip(xset,yset)])
 
 def voronoi_finite_polygons_2d(vor, radius=None):
     if vor.points.shape[1] != 2:
@@ -70,11 +82,19 @@ def voronoi_finite_polygons_2d(vor, radius=None):
 
     return new_regions, np.asarray(new_vertices)
 
-def fortunetest():
-    points = sampledata(10)
+#def fortunetest():
+#   points = sampledata(15)
+#    print(points)
+#    diagram = spatial.Voronoi(points) 
+#    regions, vertices = voronoi_finite_polygons_2d(diagram)
+#    vertices, regions, center = fortune(points)
+#   drawFortune(points, vertices, regions, center)
+
+def fortunetest1():
+    points = sampledata(100)
     #print(points)
     diagram = spatial.Voronoi(points) 
     regions, vertices = voronoi_finite_polygons_2d(diagram)
-    fortune(points)
+    fortune1(points, [0, 0, 1, 1])
 
-fortunetest()
+fortunetest1()

@@ -263,10 +263,10 @@ xratio = 1 #float(WIDTH) / 200
 
 random.seed(int(time.time()))
 
-points = randomdata(MAX_POINTS)
+points = sampledata(MAX_POINTS)
 sorted_points = points[points[:, 0].argsort()]
 print(sorted_points)
-diagram  = gen_map(points, 5)
+diagram  = gen_map(points, 1)
 
 drawPolys(diagram, "map")
 drawOutlines(diagram, "outlines")
