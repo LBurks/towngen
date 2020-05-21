@@ -5,8 +5,7 @@ from math import sqrt
 import numpy as np
 import scipy.spatial as spatial
 
-#from fortune import fortune, circle
-from fortune1 import fortune as fortune1
+from fortune import fortune
 from draw import drawFortune
 
 def sampledata(max_points = 100):
@@ -91,10 +90,10 @@ def voronoi_finite_polygons_2d(vor, radius=None):
 #   drawFortune(points, vertices, regions, center)
 
 def fortunetest1():
-    points = sampledata(100)
+    points = sampledata(10)
     #print(points)
     diagram = spatial.Voronoi(points) 
     regions, vertices = voronoi_finite_polygons_2d(diagram)
-    fortune1(points, [0, 0, 1, 1])
+    fortune(points, [0, 0, 1, 1])
 
 fortunetest1()
