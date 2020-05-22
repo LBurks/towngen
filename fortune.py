@@ -15,8 +15,10 @@ def siteEvent(point):
         beachline.append(arc(point))
         return
     #find where on our beachline the new node fits
+
     #find intersection of line and parabola
-    #sqrt(pow(i.x - p.x,2)) = sqrt((pow(f.x-i.x,2) + pow(f.y-1.y,2))
+    #i.y = p.y
+    #i.x = ((pow(f.x,2) + pow(f.y - i.y,2) + pow(p.x,2))/(2*(f.x-p.x)))
     #attach arc to the end, since there is no intersection
     beachline.append(arc(point))
 
